@@ -5,7 +5,7 @@
 - `docker run --rm --name mongodb -p 27017:27017 mongo`
 - `npm install`
 - `npm run build`
-- `npm run start
+- `npm run start`
 
 ## Docker
 
