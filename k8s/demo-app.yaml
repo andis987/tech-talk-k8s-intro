@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app-deployment
+  labels:
+    app: demo-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+        - name: demo-app
+          image: demo-app:latest
+          imagePullPolicy: Never      # Image is available only locally
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_HOST        # Notice that the case is different here
+              valueFrom:
+                configMapKeyRef:
+                  name: demo-config   # The ConfigMap this value comes from
+                  key: mongo_host     # The key to fetch.
+          readinessProbe: # Failing readiness probe will stop application from serving traffic
+            httpGet:
+              path: /
+              port: 3000
+          livenessProbe: # Failing liveness probe will restart the container
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+          resources:
+            requests: # Initial resources requested during pod scheduling
+              memory: "64Mi"
+              cpu: "250m"
+            limits: # Upper resource limits
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-app-service
+spec:
+  type: NodePort # Makes service accessible externally
+  selector:
+    app: demo-app
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 3000
+      nodePort: 30007 # Port exposed on Node

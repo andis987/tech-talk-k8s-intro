@@ -1,0 +1,33 @@
+apiVersion: apps/v1           # Specifies the API version being used for the Deployment object.
+kind: Deployment              # Specifies the type of Kubernetes object being defined.
+metadata:                     # Provides metadata for the Deployment object.
+  name: mongo-deployment
+  labels:
+    app: mongo-deployment
+spec: # Specifies the desired state for the Deployment object.
+  replicas: 1
+  selector: # Defines a label selector to identify the Pods controlled by this Deployment
+    matchLabels:
+      app: mongo
+  template: # Defines the Pod template used to create new Pods.
+    metadata: # Provides metadata for the Pod template.
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017         # Port to listen on within the Service
+      targetPort: 27017   # Port to forward traffic to on the selected Pods

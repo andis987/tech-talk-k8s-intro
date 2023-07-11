@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Text input demo</title>
+</head>
+<body>
+  <h1>Text input demo</h1>
+
+  <form action="/inputs" method="post">
+    <input type="text" name="text" placeholder="Enter text" required>
+    <button type="submit">Save</button>
+  </form>
+
+  <h2>Stored Inputs</h2>
+  <ul>
+    <% inputs.forEach(input => { %>
+      <li><%= input.text %></li>
+    <% }); %>
+  </ul>
+</body>
+</html>
